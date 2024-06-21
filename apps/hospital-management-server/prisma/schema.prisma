@@ -1,0 +1,72 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Patient {
+  address      String?
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  dateOfBirth  DateTime?
+  email        String?
+  id           String        @id @default(cuid())
+  name         String?
+  phone        String?
+  updatedAt    DateTime      @updatedAt
+}
+
+model Appointment {
+  appointmentDate DateTime?
+  createdAt       DateTime               @default(now())
+  doctor          Doctor?                @relation(fields: [doctorId], references: [id])
+  doctorId        String?
+  id              String                 @id @default(cuid())
+  patient         Patient?               @relation(fields: [patientId], references: [id])
+  patientId       String?
+  status          EnumAppointmentStatus?
+  treatments      Treatment[]
+  updatedAt       DateTime               @updatedAt
+}
+
+model Treatment {
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  appointmentId String?
+  cost          Float?
+  createdAt     DateTime     @default(now())
+  description   String?
+  id            String       @id @default(cuid())
+  treatmentName String?
+  updatedAt     DateTime     @updatedAt
+}
+
+model Doctor {
+  appointments   Appointment[]
+  createdAt      DateTime      @default(now())
+  email          String?
+  id             String        @id @default(cuid())
+  name           String?
+  phone          String?
+  specialization String?
+  updatedAt      DateTime      @updatedAt
+}
+
+model Room {
+  availability Boolean?
+  createdAt    DateTime           @default(now())
+  id           String             @id @default(cuid())
+  roomNumber   String?
+  typeField    EnumRoomTypeField?
+  updatedAt    DateTime           @updatedAt
+}
+
+enum EnumAppointmentStatus {
+  Option1
+}
+
+enum EnumRoomTypeField {
+  Option1
+}
